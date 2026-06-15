@@ -8,7 +8,7 @@
 [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg?logo=docker)](https://www.docker.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
 
-**A comprehensive, enterprise-grade DDoS protection platform designed for Internet Service Providers (ISPs)**
+**An open-source DDoS protection platform for Internet Service Providers (ISPs)**
 
 Real-time traffic monitoring • Anomaly detection • Automated mitigation • Beautiful web dashboard
 
@@ -141,7 +141,7 @@ The screenshots below show the redesigned enterprise-grade UI (dark navbar, colo
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/lupael/ddos-potection.git
+git clone https://github.com/i4Edu/ddos-potection.git
 cd ddos-potection
 ```
 
@@ -411,7 +411,6 @@ curl -X POST http://localhost:8000/api/v1/hostgroups/check-ip \
 - **Prometheus** - Metrics collection
 - **Grafana** - Monitoring dashboards
 - **Kubernetes** - Production orchestration (optional)
-- **GitHub Actions** - CI/CD pipeline
 
 ### Network Protocols
 - **NetFlow v9/v10** - Cisco traffic export
@@ -421,7 +420,7 @@ curl -X POST http://localhost:8000/api/v1/hostgroups/check-ip \
 
 ## 🔒 Security
 
-- **TLS/SSL**: All communications encrypted
+- **TLS/SSL**: Supported when deployed behind TLS termination (reverse proxy/ingress)
 - **JWT Authentication**: Secure token-based auth
 - **Role-based Access**: Fine-grained permissions
 - **API Key Management**: Secure router integration
@@ -588,8 +587,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Need help? We're here for you!
 
 - 📖 [Documentation](project-docs/INDEX.md)
-- 🐛 [GitHub Issues](https://github.com/lupael/ddos-potection/issues)
-- 💬 [Discussions](https://github.com/lupael/ddos-potection/discussions)
+- 🐛 [GitHub Issues](https://github.com/i4Edu/ddos-potection/issues)
+- 💬 [Discussions](https://github.com/i4Edu/ddos-potection/discussions)
 - 📧 Email: support@ispbills.com
 
 ## 🙏 Acknowledgments
@@ -610,7 +609,7 @@ Special thanks to these amazing open-source projects:
 
 **Made with ❤️ for ISPs worldwide**
 
-![GitHub stars](https://img.shields.io/github/stars/i4edubd/ddos-potection?style=social)
-![GitHub forks](https://img.shields.io/github/forks/i4edubd/ddos-potection?style=social)
+![GitHub stars](https://img.shields.io/github/stars/i4Edu/ddos-potection?style=social)
+![GitHub forks](https://img.shields.io/github/forks/i4Edu/ddos-potection?style=social)
 
 </div>

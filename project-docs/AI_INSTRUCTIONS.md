@@ -150,7 +150,7 @@ open http://localhost:3001  # admin/admin
 
 - **Documentation index:** [`INDEX.md`](INDEX.md)
 - **Project overview:** [`OVERVIEW.md`](OVERVIEW.md)
-- **Open issues:** <https://github.com/lupael/ddos-potection/issues>
+- **Open issues:** <https://github.com/i4Edu/ddos-potection/issues>
 - **API docs (live):** <http://localhost:8000/docs>
 
 ---

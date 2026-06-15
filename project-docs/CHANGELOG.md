@@ -5,6 +5,19 @@ All notable changes to the DDoS Protection Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5] — 2026-06-15
+
+### Fixed
+- **[Portal] Customer portal frontend now matches backend API routes** (`frontend/src/pages/customer/*.js`):
+  switched to `/api/v1/customer/my-protection`, `/my-alerts`, `/my-reports`, and `/my-settings`,
+  and aligned field usage with implemented response schemas.
+- **[Frontend API] Subscription endpoint path corrected** (`frontend/src/services/api.ts`):
+  `getSubscription()` now calls `/api/v1/subscriptions/current` instead of nonexistent `/api/v1/subscription/`.
+- **[Docs] Repository metadata and setup references corrected** (`README.md`, `project-docs/QUICKSTART.md`, `project-docs/AI_INSTRUCTIONS.md`):
+  updated GitHub owner links, badge targets, Redis service names, and BGP/grafana path references.
+- **[Planning] Added audit-priority follow-up tasks** (`project-docs/TODO.md`):
+  introduced explicit P0/P1 items for docs consistency, portal alignment, pricing vocabulary unification, and claim-vs-implementation reconciliation.
+
 ## [1.3.4] — 2026-04-23
 
 ### Fixed
