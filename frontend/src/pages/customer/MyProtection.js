@@ -4,12 +4,10 @@ import Navbar from '../../components/Navbar';
 
 /**
  * Customer self-service portal — My Protection
- * Read-only view scoped to the customer's own IP prefixes.
- * Uses the /api/v1/customer/ endpoints.
+ * Read-only account-level protection summary.
  */
 function MyProtection() {
-  const [prefixes, setPrefixes] = useState([]);
-  const [mitigations, setMitigations] = useState([]);
+  const [protection, setProtection] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -21,52 +19,22 @@ function MyProtection() {
   const loadData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
+      const res = await fetch('/api/v1/customer/my-protection', {
+        headers: { Authorization: 'Bearer ' + token },
+      });
 
-      const [prefixRes, mitigationRes] = await Promise.all([
-        fetch('/api/v1/customer/prefixes', { headers }),
-        fetch('/api/v1/customer/mitigations', { headers }),
-      ]);
-
-      if (prefixRes.status === 401 || mitigationRes.status === 401) {
+      if (res.status === 401) {
         navigate('/login');
         return;
       }
 
-      const prefixData = prefixRes.ok ? await prefixRes.json() : [];
-      const mitigationData = mitigationRes.ok ? await mitigationRes.json() : [];
-
-      setPrefixes(Array.isArray(prefixData) ? prefixData : []);
-      setMitigations(Array.isArray(mitigationData) ? mitigationData : []);
+      setProtection(res.ok ? await res.json() : null);
     } catch (err) {
       setError('Failed to load protection data.');
       console.error('MyProtection load error:', err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const statusBadge = (status) => {
-    const colours = {
-      active: '#28a745',
-      resolved: '#6c757d',
-      mitigating: '#ffc107',
-      escalating: '#dc3545',
-    };
-    return (
-      <span
-        style={{
-          background: colours[status] || '#6c757d',
-          color: '#fff',
-          padding: '2px 8px',
-          borderRadius: '12px',
-          fontSize: '0.75rem',
-          textTransform: 'capitalize',
-        }}
-      >
-        {status || 'unknown'}
-      </span>
-    );
   };
 
   if (loading) {
@@ -84,7 +52,7 @@ function MyProtection() {
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <h1>My Protection</h1>
         <p style={{ color: '#6c757d' }}>
-          Read-only view of your protected IP prefixes and active mitigations.
+          Read-only view of your account-level protection scope.
         </p>
 
         {error && (
@@ -93,72 +61,33 @@ function MyProtection() {
           </div>
         )}
 
-        {/* Protected Prefixes */}
-        <section style={{ marginBottom: '32px' }}>
+        <section style={{ marginBottom: '24px' }}>
           <h2 style={{ borderBottom: '2px solid #007bff', paddingBottom: '8px' }}>
-            Protected Prefixes ({prefixes.length})
+            Protection Summary
           </h2>
-          {prefixes.length === 0 ? (
-            <p style={{ color: '#6c757d' }}>No protected prefixes registered. Contact your ISP to add prefixes.</p>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#f8f9fa' }}>
-                  <th style={thStyle}>Prefix</th>
-                  <th style={thStyle}>Description</th>
-                  <th style={thStyle}>Protection Level</th>
-                  <th style={thStyle}>Status</th>
-                  <th style={thStyle}>Added</th>
-                </tr>
-              </thead>
-              <tbody>
-                {prefixes.map((p, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid #dee2e6' }}>
-                    <td style={tdStyle}>
-                      <code>{p.prefix || p.network || '-'}</code>
-                    </td>
-                    <td style={tdStyle}>{p.description || '-'}</td>
-                    <td style={tdStyle}>{p.protection_level || 'Standard'}</td>
-                    <td style={tdStyle}>{statusBadge(p.status || 'active')}</td>
-                    <td style={tdStyle}>{p.created_at ? new Date(p.created_at).toLocaleDateString() : '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>
+              <tr style={{ borderBottom: '1px solid #dee2e6' }}>
+                <th style={thStyle}>Username</th>
+                <td style={tdStyle}>{protection?.username || '-'}</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #dee2e6' }}>
+                <th style={thStyle}>ISP ID</th>
+                <td style={tdStyle}>{protection?.isp_id || '-'}</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #dee2e6' }}>
+                <th style={thStyle}>Scope</th>
+                <td style={tdStyle}>{protection?.protection_scope || '-'}</td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
-        {/* Active / Recent Mitigations */}
         <section>
           <h2 style={{ borderBottom: '2px solid #28a745', paddingBottom: '8px' }}>
-            Active Mitigations ({mitigations.length})
+            Notes
           </h2>
-          {mitigations.length === 0 ? (
-            <p style={{ color: '#6c757d' }}>No active mitigations. Your traffic is flowing normally.</p>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#f8f9fa' }}>
-                  <th style={thStyle}>Target IP</th>
-                  <th style={thStyle}>Attack Type</th>
-                  <th style={thStyle}>Action</th>
-                  <th style={thStyle}>State</th>
-                  <th style={thStyle}>Started</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mitigations.map((m, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid #dee2e6' }}>
-                    <td style={tdStyle}><code>{m.target_ip || '-'}</code></td>
-                    <td style={tdStyle}>{m.attack_type || m.action_type || '-'}</td>
-                    <td style={tdStyle}>{m.action_type || '-'}</td>
-                    <td style={tdStyle}>{statusBadge(m.state || m.status || 'active')}</td>
-                    <td style={tdStyle}>{m.created_at ? new Date(m.created_at).toLocaleString() : '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <p style={{ color: '#6c757d' }}>{protection?.message || 'No protection details available.'}</p>
         </section>
       </div>
     </div>

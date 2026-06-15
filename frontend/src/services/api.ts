@@ -147,7 +147,7 @@ export const listISPUsers = (): Promise<AxiosResponse<IUser[]>> =>
 
 // Subscriptions
 export const getSubscription = (): Promise<AxiosResponse<ISubscription>> =>
-  apiClient.get<ISubscription>('/subscription/');
+  apiClient.get<ISubscription>('/subscriptions/current');
 
 // Attack Campaigns
 export const getAttackCampaigns = (): Promise<AxiosResponse<IAttackCampaign[]>> =>

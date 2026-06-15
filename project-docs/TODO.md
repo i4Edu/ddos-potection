@@ -11,6 +11,26 @@ Legend: `[ ]` open · `[x]` done · `[~]` in-progress · `[!]` blocked
 
 ## 🔴 Critical — Must fix before next production release
 
+- [ ] **[Docs Audit] Resolve README/codebase consistency gaps (owner links, claims, setup guidance)**
+  - Files: `README.md`, `project-docs/QUICKSTART.md`, `project-docs/AI_INSTRUCTIONS.md`
+  - Priority: P0
+  - Notes: Keep repository metadata, links, and security/CI statements aligned with current implementation.
+
+- [ ] **[Portal] Align customer portal frontend with implemented backend API contracts**
+  - Files: `frontend/src/pages/customer/*.js`, `frontend/src/services/api.ts`, `backend/routers/customer_router.py`
+  - Priority: P0
+  - Notes: Remove endpoint/schema drift (`/my-*` routes vs deprecated frontend paths) and restore functional customer screens.
+
+- [ ] **[Pricing] Unify plan/tier naming across subscriptions and SLA docs/UI**
+  - Files: `backend/routers/subscription_router.py`, `backend/services/sla_service.py`, `project-docs/OVERVIEW.md`, `README.md`
+  - Priority: P1
+  - Notes: Decide single vocabulary (`basic/professional/enterprise` or `standard/pro/enterprise`) and enforce it consistently.
+
+- [ ] **[Claims] Reconcile “production-ready/fully complete” claims with stubbed integrations**
+  - Files: `project-docs/REPORT.md`, `project-docs/ROADMAP.md`, `project-docs/OVERVIEW.md`
+  - Priority: P1
+  - Notes: Explicitly label placeholder or simulated integrations (PayPal/bKash, DNS verify, scrubbing-provider adapters, AF_XDP fallback).
+
 - [x] **[Security] Sanitise `subprocess` calls in `mitigation_service.py`**
   - File: `backend/services/mitigation_service.py`
   - Fixed: `apply_iptables_rule`, `apply_nftables_rule`, `apply_rate_limit` now validate IP/CIDR

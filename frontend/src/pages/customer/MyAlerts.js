@@ -4,13 +4,13 @@ import Navbar from '../../components/Navbar';
 
 /**
  * Customer self-service portal — My Alerts
- * Read-only feed of DDoS alerts affecting the customer's own prefixes.
+ * Read-only feed of DDoS alerts affecting the customer's ISP scope.
  */
 function MyAlerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all'); // 'all' | 'open' | 'resolved'
+  const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'resolved'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,8 +20,8 @@ function MyAlerts() {
   const loadAlerts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/customer/alerts', {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch('/api/v1/customer/my-alerts', {
+        headers: { Authorization: 'Bearer ' + token },
       });
       if (res.status === 401) {
         navigate('/login');
@@ -43,8 +43,8 @@ function MyAlerts() {
   };
 
   const filtered = alerts.filter((a) => {
-    if (filter === 'open') return !a.resolved;
-    if (filter === 'resolved') return a.resolved;
+    if (filter === 'active') return a.status === 'active' || a.status === 'mitigated';
+    if (filter === 'resolved') return a.status === 'resolved';
     return true;
   });
 
@@ -63,7 +63,7 @@ function MyAlerts() {
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <h1>My Alerts</h1>
         <p style={{ color: '#6c757d' }}>
-          DDoS alerts affecting your protected IP prefixes (read-only).
+          DDoS alerts affecting your protected ISP scope (read-only).
         </p>
 
         {error && (
@@ -72,9 +72,8 @@ function MyAlerts() {
           </div>
         )}
 
-        {/* Filter bar */}
         <div style={{ marginBottom: '16px', display: 'flex', gap: '8px' }}>
-          {['all', 'open', 'resolved'].map((f) => (
+          {['all', 'active', 'resolved'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -105,7 +104,6 @@ function MyAlerts() {
                 <th style={thStyle}>Severity</th>
                 <th style={thStyle}>Attack Type</th>
                 <th style={thStyle}>Target IP</th>
-                <th style={thStyle}>Packets/s</th>
                 <th style={thStyle}>Status</th>
                 <th style={thStyle}>Detected At</th>
               </tr>
@@ -127,14 +125,15 @@ function MyAlerts() {
                       {a.severity || 'info'}
                     </span>
                   </td>
-                  <td style={tdStyle}>{a.attack_type || '-'}</td>
+                  <td style={tdStyle}>{a.alert_type || '-'}</td>
                   <td style={tdStyle}><code>{a.target_ip || a.source_ip || '-'}</code></td>
-                  <td style={tdStyle}>{a.packets_per_second ? a.packets_per_second.toLocaleString() : '-'}</td>
                   <td style={tdStyle}>
-                    {a.resolved ? (
+                    {a.status === 'resolved' ? (
                       <span style={{ color: '#28a745' }}>✓ Resolved</span>
+                    ) : a.status === 'mitigated' ? (
+                      <span style={{ color: '#fd7e14' }}>⟳ Mitigated</span>
                     ) : (
-                      <span style={{ color: '#dc3545' }}>● Open</span>
+                      <span style={{ color: '#dc3545' }}>● Active</span>
                     )}
                   </td>
                   <td style={tdStyle}>

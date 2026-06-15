@@ -11,7 +11,7 @@ Get the DDoS Protection Platform running in under 10 minutes!
 ## Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/lupael/ddos-potection.git
+git clone https://github.com/i4Edu/ddos-potection.git
 cd ddos-potection
 ```
 
@@ -35,7 +35,9 @@ ddos-frontend       "npm start"              Up                  0.0.0.0:3000->3
 ddos-grafana        "/run.sh"                Up                  0.0.0.0:3001->3000/tcp
 ddos-postgres       "docker-entrypoint..."   Up                  0.0.0.0:5432->5432/tcp
 ddos-prometheus     "/bin/prometheus..."     Up                  0.0.0.0:9090->9090/tcp
-ddos-redis          "docker-entrypoint..."   Up                  0.0.0.0:6379->6379/tcp
+ddos-redis-master   "docker-entrypoint..."   Up                  0.0.0.0:6379->6379/tcp
+ddos-redis-replica  "redis-server --..."     Up
+ddos-redis-sentinel "redis-sentinel ..."     Up                  0.0.0.0:26379->26379/tcp
 ```
 
 ## Step 3: Access the Platform
@@ -150,7 +152,7 @@ Copy and paste the generated commands into your Juniper router.
 3. Change the password when prompted
 4. Add Prometheus as a data source:
    - URL: `http://prometheus:9090`
-5. Import dashboards from `docs/grafana/`
+5. Import dashboards from `docker/grafana/dashboards/`
 
 ## Step 8: (Optional) Setup BGP Blackholing
 
@@ -164,7 +166,7 @@ For advanced DDoS mitigation using BGP-based traffic dropping:
 2. **See complete BGP setup guide**:
    ```bash
    # Read the comprehensive BGP documentation
-   cat BGP-RTBH.md
+   cat project-docs/BGP-RTBH.md
    ```
 
 3. **Quick BGP Setup** (ExaBGP example):
@@ -172,8 +174,8 @@ For advanced DDoS mitigation using BGP-based traffic dropping:
    # Install ExaBGP
    pip3 install exabgp
    
-   # Configure ExaBGP (see BGP-RTBH.md for the example config)
-   # Create /etc/exabgp/exabgp.conf based on the example in BGP-RTBH.md
+   # Configure ExaBGP (see project-docs/BGP-RTBH.md for the example config)
+   # Create /etc/exabgp/exabgp.conf based on the example in project-docs/BGP-RTBH.md
    
    # Enable in platform
    echo "BGP_ENABLED=true" >> backend/.env
@@ -236,10 +238,10 @@ docker-compose restart postgres
 
 ```bash
 # Check Redis is running
-docker-compose ps redis
+docker-compose ps redis-master
 
 # Test Redis
-docker exec ddos-redis redis-cli ping
+docker exec ddos-redis-master redis-cli ping
 ```
 
 ## Next Steps
@@ -247,14 +249,14 @@ docker exec ddos-redis redis-cli ping
 1. **Configure Notifications**: Set up email/Telegram alerts in Settings
 2. **Customize Thresholds**: Adjust detection thresholds for your network
 3. **Add Users**: Invite team members with different roles
-4. **Review Documentation**: Read the full documentation in `docs/`
+4. **Review Documentation**: Read the full documentation in `project-docs/`
 5. **Integrate Routers**: Connect your network equipment
 6. **Set Up Monitoring**: Configure Grafana dashboards
 
 ## Getting Help
 
-- **Documentation**: See `docs/` folder
-- **GitHub Issues**: https://github.com/i4edubd/ddos-potection/issues
+- **Documentation**: See `project-docs/` folder
+- **GitHub Issues**: https://github.com/i4Edu/ddos-potection/issues
 - **API Docs**: http://localhost:8000/docs
 
 ## Important Security Notes
