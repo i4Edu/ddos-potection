@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import { getMyProtection } from '../../services/api';
+import type { ICustomerProtection } from '../../types/api';
 
 /**
  * Customer self-service portal — My Protection
  * Read-only account-level protection summary.
  */
 function MyProtection() {
-  const [protection, setProtection] = useState(null);
+  const [protection, setProtection] = useState<ICustomerProtection | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,18 +20,13 @@ function MyProtection() {
 
   const loadData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/customer/my-protection', {
-        headers: { Authorization: 'Bearer ' + token },
-      });
-
-      if (res.status === 401) {
+      const res = await getMyProtection();
+      setProtection(res.data);
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
         navigate('/login');
         return;
       }
-
-      setProtection(res.ok ? await res.json() : null);
-    } catch (err) {
       setError('Failed to load protection data.');
       console.error('MyProtection load error:', err);
     } finally {

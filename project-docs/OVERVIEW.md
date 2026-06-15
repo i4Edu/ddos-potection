@@ -91,7 +91,7 @@ Packet Capture Service                     Mitigation Orchestrator
 ### Multi-tenancy & Billing
 - ISP accounts with isolated data, RBAC (admin / operator / viewer)
 - Subscription tiers: Basic ($29.99), Professional ($99.99), Enterprise ($299.99)
-- Payment: Stripe, PayPal, bKash; invoice generation
+- Payment: Stripe (fully wired), PayPal and bKash (functional stubs — real credentials required for live use); invoice generation
 - Monthly / weekly / incident reports (PDF / CSV / TXT)
 
 ---
@@ -144,7 +144,7 @@ ddos-potection/
 ## Quick Start (30 seconds)
 
 ```bash
-git clone https://github.com/lupael/ddos-potection.git
+git clone https://github.com/i4Edu/ddos-potection.git
 cd ddos-potection
 cp .env.example backend/.env   # edit as needed
 docker-compose up -d
@@ -163,4 +163,4 @@ MIT — see [`../LICENSE`](../LICENSE)
 
 ---
 
-*Last updated: 2026-03-25*
+*Last updated: 2026-06-15*

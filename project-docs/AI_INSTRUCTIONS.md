@@ -129,10 +129,10 @@ Before touching any file in the repository, read the following in order:
 docker-compose up -d
 
 # Run backend tests
-cd backend && pytest -v
+cd backend && python -m pytest -v
 
-# Run frontend tests
-cd frontend && npm test
+# Run frontend tests (no interactive watch mode in CI)
+cd frontend && CI=true npm test -- --watchAll=false --passWithNoTests
 
 # Check API docs
 open http://localhost:8000/docs
@@ -158,4 +158,4 @@ open http://localhost:3001  # admin/admin
 *This file is authoritative. If you find a conflict between this file and another source,
 follow this file and open an issue to resolve the discrepancy.*
 
-*Last updated: 2026-03-25*
+*Last updated: 2026-06-15*

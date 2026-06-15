@@ -5,7 +5,36 @@ All notable changes to the DDoS Protection Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.5] — 2026-06-15
+## [1.3.6] — 2026-06-15
+
+### Added
+- **[Types] Customer portal TypeScript types** (`frontend/src/types/api.d.ts`):
+  added `ICustomerProtection`, `ICustomerAlertItem`, `ICustomerReportItem`,
+  `ICustomerSettings`, `ICustomerSettingsUpdate` interfaces matching the
+  `/api/v1/customer/my-*` response schemas.
+- **[API service] Customer portal functions** (`frontend/src/services/api.ts`):
+  `getMyProtection()`, `getMyAlerts()`, `getMyReports()`, `getMySettings()`,
+  `updateMySettings()` using the typed axios client.
+
+### Changed
+- **[Portal] Customer pages use typed api.ts service layer** (`frontend/src/pages/customer/*.js`):
+  replaced raw `fetch()` + manual token header injection with typed `api.ts` calls;
+  401 handling now relies on Axios response interceptor pattern.
+- **[Pricing] `SLA_TIERS` aligned with subscription vocabulary** (`backend/services/sla_service.py`):
+  added canonical `basic` (≡ standard) and `professional` (≡ pro) keys so the tier
+  names used in `subscription_router.py`, `sla_router.py`, and `permissions.py` work
+  directly with `SLAComplianceChecker`; legacy `standard`/`pro` keys retained as aliases.
+- **[Pricing] `sla_compliance_router.py` default tier** changed from `standard` → `basic`.
+- **[Docs] `OVERVIEW.md` clone URL** corrected from `lupael` → `i4Edu`.
+- **[Docs] `AI_INSTRUCTIONS.md` test command** updated to `python -m pytest` with
+  CI-safe frontend flags (`--watchAll=false --passWithNoTests`).
+- **[Docs] `OVERVIEW.md` billing description** flags PayPal and bKash as functional stubs.
+
+### Fixed
+- **[Claims] Stub integrations labelled** (`project-docs/REPORT.md`):
+  scrubbing-centre adapters, PayPal/bKash billing, and DNS domain-verify stubs are
+  now explicitly marked ⚠️ in the Known Issues table and relevant sections so
+  operators know what requires real provider credentials before production use.
 
 ### Fixed
 - **[Portal] Customer portal frontend now matches backend API routes** (`frontend/src/pages/customer/*.js`):

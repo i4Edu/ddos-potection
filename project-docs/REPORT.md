@@ -62,19 +62,19 @@ and similar commercial products, at zero licensing cost.
 
 ### 3. Mitigation ✅ Complete
 
-| Type | Status |
-|---|---|
-| iptables / nftables | ✅ |
-| MikroTik API | ✅ |
-| BGP RTBH (ExaBGP / FRR / BIRD) | ✅ |
-| FlowSpec (RFC 5575) | ✅ |
-| Cisco IOS/XR, Juniper JunOS, Nokia SROS, Arista EOS | ✅ |
-| Scrubbing centre diversion (Cloudflare, Lumen, NSFOCUS) | ✅ |
-| State machine (Detected→Mitigating→Verifying→Resolved) | ✅ |
-| Cooldown de-mitigation | ✅ |
-| Intelligent action selection | ✅ |
-| Auto-escalation matrix | ✅ |
-| Pre-emptive mitigation (risk-score triggered) | ✅ |
+| Type | Status | Notes |
+|---|---|---|
+| iptables / nftables | ✅ | Fully functional |
+| MikroTik API | ✅ | Fully functional |
+| BGP RTBH (ExaBGP / FRR / BIRD) | ✅ | Fully functional |
+| FlowSpec (RFC 5575) | ✅ | Fully functional |
+| Cisco IOS/XR, Juniper JunOS, Nokia SROS, Arista EOS | ✅ | Fully functional via Netmiko/NAPALM |
+| Scrubbing centre diversion (Cloudflare, Lumen, NSFOCUS) | ⚠️ Stub | Provider adapters simulate API calls; real provider credentials required for production use |
+| State machine (Detected→Mitigating→Verifying→Resolved) | ✅ | Fully functional |
+| Cooldown de-mitigation | ✅ | Fully functional |
+| Intelligent action selection | ✅ | Fully functional |
+| Auto-escalation matrix | ✅ | Fully functional |
+| Pre-emptive mitigation (risk-score triggered) | ✅ | Fully functional |
 
 ### 4. Backend API ✅ Complete (90+ endpoints, 36 routers)
 
@@ -96,6 +96,11 @@ All planned API endpoints are implemented. Key additions since v1.1:
 ### 6. Multi-tenancy & Billing ✅ Complete
 
 All features implemented including customer RBAC role, self-service portal, and whitelabel branding.
+
+> **Billing note:** Stripe integration is fully wired.  PayPal and bKash adapters are functional
+> stubs — they accept webhook events and generate invoices but do **not** connect to live payment
+> provider APIs.  Wiring real PayPal/bKash credentials requires configuring the corresponding
+> environment variables and completing provider-side OAuth/API-key setup.
 
 ### 7. Monitoring & Alerting ✅ Complete
 
@@ -138,6 +143,9 @@ pre-emptive mitigation, business intelligence, capacity planning.
 | AF_XDP requires kernel ≥4.18 + libbpf at runtime | 🟡 LOW | Falls back to AF_PACKET automatically |
 | GeoIP requires MaxMind DB file (`GEOIP_DB_PATH`) | 🟡 LOW | Hash-based stub used when absent |
 | ML predictor uses GradientBoosting (not true LSTM) | 🟡 LOW | Documented in `services/lstm_predictor.py` |
+| Scrubbing-centre adapters (Cloudflare/Lumen/NSFOCUS) simulate provider API calls | 🟡 LOW | Stubs — production use requires real provider credentials |
+| PayPal & bKash billing adapters do not connect to live payment APIs | 🟡 LOW | Stubs — requires provider OAuth/API-key configuration |
+| Custom-domain DNS verification uses a placeholder check | 🟡 LOW | `services/custom_domain.py` — real DNS TXT lookup not wired |
 
 ---
 

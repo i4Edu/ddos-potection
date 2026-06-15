@@ -1,20 +1,28 @@
 """
 Tier-based SLA compliance checking and reporting.
 
-Defines SLA targets for standard/pro/enterprise tiers and provides helpers
+Defines SLA targets for basic/professional/enterprise tiers and provides helpers
 to evaluate per-incident compliance, calculate breach credits, and generate
 monthly compliance reports.
+
+Canonical tier names are ``basic``, ``professional``, and ``enterprise``
+(matching the subscription plan vocabulary).  The legacy aliases ``standard``
+and ``pro`` are retained for backward compatibility.
 """
 import logging
 from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-# SLA tier targets (seconds)
+# SLA tier targets (seconds).
+# Canonical names: basic, professional, enterprise.
+# Legacy aliases: standard (→ basic), pro (→ professional).
 SLA_TIERS: dict = {
-    "standard": {"ttd_secs": 300, "ttm_secs": 900},
-    "pro":      {"ttd_secs": 120, "ttm_secs": 300},
-    "enterprise": {"ttd_secs": 30,  "ttm_secs": 120},
+    "basic":         {"ttd_secs": 300, "ttm_secs": 900},
+    "standard":      {"ttd_secs": 300, "ttm_secs": 900},   # alias for basic
+    "professional":  {"ttd_secs": 120, "ttm_secs": 300},
+    "pro":           {"ttd_secs": 120, "ttm_secs": 300},   # alias for professional
+    "enterprise":    {"ttd_secs": 30,  "ttm_secs": 120},
 }
 
 # Credit percentage per breach, capped at MAX_CREDIT_PCT
@@ -29,7 +37,8 @@ class SLAComplianceChecker:
         """Check whether a time-to-detect value meets the SLA target for a tier.
 
         Args:
-            tier: SLA tier name — one of "standard", "pro", "enterprise".
+            tier: SLA tier name — one of "basic", "professional", "enterprise"
+                  (legacy aliases "standard" and "pro" are also accepted).
             actual_ttd_secs: Actual time-to-detect in seconds.
 
         Returns:
@@ -54,7 +63,8 @@ class SLAComplianceChecker:
         """Check whether a time-to-mitigate value meets the SLA target for a tier.
 
         Args:
-            tier: SLA tier name — one of "standard", "pro", "enterprise".
+            tier: SLA tier name — one of "basic", "professional", "enterprise"
+                  (legacy aliases "standard" and "pro" are also accepted).
             actual_ttm_secs: Actual time-to-mitigate in seconds.
 
         Returns:

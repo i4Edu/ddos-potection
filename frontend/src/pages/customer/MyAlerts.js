@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import { getMyAlerts } from '../../services/api';
+import type { ICustomerAlertItem } from '../../types/api';
 
 /**
  * Customer self-service portal — My Alerts
  * Read-only feed of DDoS alerts affecting the customer's ISP scope.
  */
 function MyAlerts() {
-  const [alerts, setAlerts] = useState([]);
+  const [alerts, setAlerts] = useState<ICustomerAlertItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'resolved'
   const navigate = useNavigate();
 
@@ -19,17 +21,13 @@ function MyAlerts() {
 
   const loadAlerts = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/customer/my-alerts', {
-        headers: { Authorization: 'Bearer ' + token },
-      });
-      if (res.status === 401) {
+      const res = await getMyAlerts();
+      setAlerts(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
         navigate('/login');
         return;
       }
-      const data = res.ok ? await res.json() : [];
-      setAlerts(Array.isArray(data) ? data : []);
-    } catch (err) {
       setError('Failed to load alerts.');
       console.error('MyAlerts load error:', err);
     } finally {

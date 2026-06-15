@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import { getMyReports, downloadReport } from '../../services/api';
+import type { ICustomerReportItem } from '../../types/api';
 
 /**
  * Customer self-service portal — My Reports
  * Read-only list of reports generated for the customer's ISP scope.
  */
 function MyReports() {
-  const [reports, setReports] = useState([]);
+  const [reports, setReports] = useState<ICustomerReportItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,19 +20,13 @@ function MyReports() {
 
   const loadData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/customer/my-reports', {
-        headers: { Authorization: 'Bearer ' + token },
-      });
-
-      if (res.status === 401) {
+      const res = await getMyReports();
+      setReports(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
         navigate('/login');
         return;
       }
-
-      const reportData = res.ok ? await res.json() : [];
-      setReports(Array.isArray(reportData) ? reportData : []);
-    } catch (err) {
       setError('Failed to load reports.');
       console.error('MyReports load error:', err);
     } finally {
@@ -38,25 +34,22 @@ function MyReports() {
     }
   };
 
-  const handleDownload = async (report) => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`/api/v1/reports/${report.id}/download`, {
-      headers: { Authorization: 'Bearer ' + token },
-    });
-    if (!res.ok) {
+  const handleDownload = async (report: ICustomerReportItem) => {
+    try {
+      const res = await downloadReport(report.id);
+      const blob = new Blob([res.data]);
+      const url = URL.createObjectURL(blob);
+      const disposition = (res.headers as any)['content-disposition'] || '';
+      const match = disposition.match(/filename="?([^"]+)"?/i);
+      const fallbackExt = report.file_format || 'bin';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = match?.[1] || `report_${report.id}.${fallbackExt}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
       alert('Download failed.');
-      return;
     }
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const disposition = res.headers.get('Content-Disposition') || '';
-    const match = disposition.match(/filename="?([^"]+)"?/i);
-    const fallbackExt = report.file_format || 'bin';
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = match?.[1] || `report_${report.id}.${fallbackExt}`;
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
   if (loading) {

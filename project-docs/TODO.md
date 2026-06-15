@@ -11,25 +11,21 @@ Legend: `[ ]` open · `[x]` done · `[~]` in-progress · `[!]` blocked
 
 ## 🔴 Critical — Must fix before next production release
 
-- [ ] **[Docs Audit] Resolve README/codebase consistency gaps (owner links, claims, setup guidance)**
+- [x] **[Docs Audit] Resolve README/codebase consistency gaps (owner links, claims, setup guidance)**
   - Files: `README.md`, `project-docs/QUICKSTART.md`, `project-docs/AI_INSTRUCTIONS.md`
-  - Priority: P0
-  - Notes: Keep repository metadata, links, and security/CI statements aligned with current implementation.
+  - Fixed: corrected `lupael` → `i4Edu` clone URL in `OVERVIEW.md`; aligned test command in `AI_INSTRUCTIONS.md` to `python -m pytest` with CI flags.
 
-- [ ] **[Portal] Align customer portal frontend with implemented backend API contracts**
+- [x] **[Portal] Align customer portal frontend with implemented backend API contracts**
   - Files: `frontend/src/pages/customer/*.js`, `frontend/src/services/api.ts`, `backend/routers/customer_router.py`
-  - Priority: P0
-  - Notes: Remove endpoint/schema drift (`/my-*` routes vs deprecated frontend paths) and restore functional customer screens.
+  - Fixed: added typed customer portal functions (`getMyProtection`, `getMyAlerts`, `getMyReports`, `getMySettings`, `updateMySettings`) to `api.ts`; added `ICustomerProtection`, `ICustomerAlertItem`, `ICustomerReportItem`, `ICustomerSettings`, `ICustomerSettingsUpdate` types to `api.d.ts`; refactored all four customer portal pages to use the typed service layer instead of raw `fetch()`.
 
-- [ ] **[Pricing] Unify plan/tier naming across subscriptions and SLA docs/UI**
+- [x] **[Pricing] Unify plan/tier naming across subscriptions and SLA docs/UI**
   - Files: `backend/routers/subscription_router.py`, `backend/services/sla_service.py`, `project-docs/OVERVIEW.md`, `README.md`
-  - Priority: P1
-  - Notes: Decide single vocabulary (`basic/professional/enterprise` or `standard/pro/enterprise`) and enforce it consistently.
+  - Fixed: added canonical `basic` and `professional` keys to `SLA_TIERS` in `sla_service.py` (matching subscription vocabulary); legacy `standard`/`pro` retained as backward-compatible aliases; updated `sla_compliance_router.py` default tier to `basic`; updated docstrings.
 
-- [ ] **[Claims] Reconcile “production-ready/fully complete” claims with stubbed integrations**
+- [x] **[Claims] Reconcile "production-ready/fully complete" claims with stubbed integrations**
   - Files: `project-docs/REPORT.md`, `project-docs/ROADMAP.md`, `project-docs/OVERVIEW.md`
-  - Priority: P1
-  - Notes: Explicitly label placeholder or simulated integrations (PayPal/bKash, DNS verify, scrubbing-provider adapters, AF_XDP fallback).
+  - Fixed: added ⚠️ Stub notes to scrubbing-centre adapters in `REPORT.md` mitigation table; added billing note about PayPal/bKash stubs in section 6; expanded Known Issues table with scrubbing adapters, PayPal/bKash, and DNS domain-verify stubs; updated `OVERVIEW.md` billing description to flag PayPal/bKash as stubs.
 
 - [x] **[Security] Sanitise `subprocess` calls in `mitigation_service.py`**
   - File: `backend/services/mitigation_service.py`
@@ -362,4 +358,4 @@ Legend: `[ ]` open · `[x]` done · `[~]` in-progress · `[!]` blocked
 
 ---
 
-*Last updated: 2026-03-26*
+*Last updated: 2026-06-15*

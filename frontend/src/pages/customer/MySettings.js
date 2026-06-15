@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import { getMySettings, updateMySettings } from '../../services/api';
+import type { ICustomerSettings } from '../../types/api';
 
 /**
  * Customer self-service portal — My Settings
@@ -9,8 +11,8 @@ import Navbar from '../../components/Navbar';
 function MySettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMsg, setSuccessMsg] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [notificationEmail, setNotificationEmail] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
   const [alertThreshold, setAlertThreshold] = useState('high');
@@ -22,19 +24,16 @@ function MySettings() {
 
   const loadSettings = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/customer/my-settings', {
-        headers: { Authorization: 'Bearer ' + token },
-      });
-      if (res.status === 401) {
-        navigate('/login');
-        return;
-      }
-      const data = res.ok ? await res.json() : {};
+      const res = await getMySettings();
+      const data: ICustomerSettings = res.data;
       setNotificationEmail(data.notification_email || '');
       setWebhookUrl(data.webhook_url || '');
       setAlertThreshold(data.alert_threshold || 'high');
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        navigate('/login');
+        return;
+      }
       setError('Failed to load settings.');
       console.error('MySettings load error:', err);
     } finally {
@@ -42,37 +41,26 @@ function MySettings() {
     }
   };
 
-  const handleSave = async (e) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
     setSuccessMsg(null);
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/customer/my-settings', {
-        method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          notification_email: notificationEmail || null,
-          webhook_url: webhookUrl || null,
-          alert_threshold: alertThreshold,
-        }),
+      await updateMySettings({
+        notification_email: notificationEmail || null,
+        webhook_url: webhookUrl || null,
+        alert_threshold: alertThreshold,
       });
-      if (res.status === 401) {
+      setSuccessMsg('Settings saved successfully.');
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
         navigate('/login');
         return;
       }
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || 'Save failed');
-      }
-      setSuccessMsg('Settings saved successfully.');
-    } catch (err) {
-      setError(err.message || 'Failed to save settings.');
+      const detail = err?.response?.data?.detail;
+      setError(detail || err?.message || 'Failed to save settings.');
     } finally {
       setSaving(false);
     }

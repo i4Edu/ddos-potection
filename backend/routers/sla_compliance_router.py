@@ -43,7 +43,7 @@ def list_tiers(current_user: User = Depends(get_current_user)):
 def monthly_report(
     year: int = Query(..., ge=2000, le=2100, description="Report year"),
     month: int = Query(..., ge=1, le=12, description="Report month (1–12)"),
-    tier: str = Query("standard", description="SLA tier: standard, pro, enterprise"),
+    tier: str = Query("basic", description="SLA tier: basic, professional, enterprise (legacy aliases: standard, pro)"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

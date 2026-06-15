@@ -159,3 +159,50 @@ export interface IMitigationAnalytics {
   success_rate_percent: number;
   most_used_types: Array<{ type: string; count: number }>;
 }
+
+// Customer self-service portal types
+export interface ICustomerProtection {
+  user_id: number;
+  isp_id: number;
+  username: string;
+  protection_scope: string;
+  message: string;
+}
+
+export interface ICustomerAlertItem {
+  id: number;
+  alert_type: string;
+  severity: string;
+  status: string;
+  source_ip: string | null;
+  target_ip: string | null;
+  description: string | null;
+  created_at: string;
+  resolved_at: string | null;
+}
+
+export interface ICustomerReportItem {
+  id: number;
+  report_type: string;
+  period_start: string | null;
+  period_end: string | null;
+  file_format: string;
+  created_at: string;
+}
+
+export interface ICustomerSettings {
+  id: number;
+  user_id: number;
+  isp_id: number;
+  notification_email: string | null;
+  webhook_url: string | null;
+  alert_threshold: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface ICustomerSettingsUpdate {
+  notification_email?: string | null;
+  webhook_url?: string | null;
+  alert_threshold?: string;
+}

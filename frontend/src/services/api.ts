@@ -15,6 +15,11 @@ import type {
   ITrafficStats,
   IAlertSummary,
   IMitigationAnalytics,
+  ICustomerProtection,
+  ICustomerAlertItem,
+  ICustomerReportItem,
+  ICustomerSettings,
+  ICustomerSettingsUpdate,
 } from '../types/api';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
@@ -196,5 +201,23 @@ export const listCaptures = (): Promise<AxiosResponse<unknown[]>> =>
 
 export const downloadCapture = (filename: string): Promise<AxiosResponse<Blob>> =>
   apiClient.get<Blob>(`/capture/download/${filename}`, { responseType: 'blob' });
+
+// Customer self-service portal
+export const getMyProtection = (): Promise<AxiosResponse<ICustomerProtection>> =>
+  apiClient.get<ICustomerProtection>('/customer/my-protection');
+
+export const getMyAlerts = (): Promise<AxiosResponse<ICustomerAlertItem[]>> =>
+  apiClient.get<ICustomerAlertItem[]>('/customer/my-alerts');
+
+export const getMyReports = (): Promise<AxiosResponse<ICustomerReportItem[]>> =>
+  apiClient.get<ICustomerReportItem[]>('/customer/my-reports');
+
+export const getMySettings = (): Promise<AxiosResponse<ICustomerSettings>> =>
+  apiClient.get<ICustomerSettings>('/customer/my-settings');
+
+export const updateMySettings = (
+  data: ICustomerSettingsUpdate,
+): Promise<AxiosResponse<ICustomerSettings>> =>
+  apiClient.put<ICustomerSettings>('/customer/my-settings', data);
 
 export default apiClient;
