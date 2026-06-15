@@ -43,7 +43,7 @@ function MyAlerts() {
   };
 
   const filtered = alerts.filter((a) => {
-    if (filter === 'active') return a.status === 'active';
+    if (filter === 'active') return a.status === 'active' || a.status === 'mitigated';
     if (filter === 'resolved') return a.status === 'resolved';
     return true;
   });
@@ -130,6 +130,8 @@ function MyAlerts() {
                   <td style={tdStyle}>
                     {a.status === 'resolved' ? (
                       <span style={{ color: '#28a745' }}>✓ Resolved</span>
+                    ) : a.status === 'mitigated' ? (
+                      <span style={{ color: '#fd7e14' }}>⟳ Mitigated</span>
                     ) : (
                       <span style={{ color: '#dc3545' }}>● Active</span>
                     )}

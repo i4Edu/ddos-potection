@@ -172,11 +172,11 @@ def update_my_settings(
         )
         db.add(settings)
 
-    if payload.notification_email is not None:
+    if "notification_email" in payload.model_fields_set:
         settings.notification_email = payload.notification_email
-    if payload.webhook_url is not None:
+    if "webhook_url" in payload.model_fields_set:
         settings.webhook_url = payload.webhook_url
-    if payload.alert_threshold is not None:
+    if "alert_threshold" in payload.model_fields_set:
         settings.alert_threshold = payload.alert_threshold
 
     db.commit()

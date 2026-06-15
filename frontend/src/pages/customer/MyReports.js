@@ -38,9 +38,9 @@ function MyReports() {
     }
   };
 
-  const handleDownload = async (reportId) => {
+  const handleDownload = async (report) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`/api/v1/reports/${reportId}/download`, {
+    const res = await fetch(`/api/v1/reports/${report.id}/download`, {
       headers: { Authorization: 'Bearer ' + token },
     });
     if (!res.ok) {
@@ -51,14 +51,10 @@ function MyReports() {
     const url = URL.createObjectURL(blob);
     const disposition = res.headers.get('Content-Disposition') || '';
     const match = disposition.match(/filename="?([^"]+)"?/i);
-    const contentType = res.headers.get('Content-Type') || '';
-    let fallbackExt = 'bin';
-    if (contentType.includes('pdf')) fallbackExt = 'pdf';
-    if (contentType.includes('csv')) fallbackExt = 'csv';
-    if (contentType.includes('text')) fallbackExt = 'txt';
+    const fallbackExt = report.file_format || 'bin';
     const a = document.createElement('a');
     a.href = url;
-    a.download = match?.[1] || `report_${reportId}.${fallbackExt}`;
+    a.download = match?.[1] || `report_${report.id}.${fallbackExt}`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -104,8 +100,8 @@ function MyReports() {
                 </tr>
               </thead>
               <tbody>
-                {reports.map((r, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid #dee2e6' }}>
+                {reports.map((r) => (
+                  <tr key={r.id} style={{ borderBottom: '1px solid #dee2e6' }}>
                     <td style={tdStyle}>{r.report_type || `Report #${r.id}`}</td>
                     <td style={tdStyle}>
                       {r.period_start && r.period_end
@@ -117,7 +113,7 @@ function MyReports() {
                     </td>
                     <td style={tdStyle}>
                       <button
-                        onClick={() => handleDownload(r.id)}
+                        onClick={() => handleDownload(r)}
                         style={{
                           padding: '4px 10px',
                           borderRadius: '4px',
