@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **[Portal] Customer pages use typed api.ts service layer** (`frontend/src/pages/customer/*.js`):
   replaced raw `fetch()` + manual token header injection with typed `api.ts` calls;
-  401 handling now relies on Axios response interceptor pattern.
+  401 handling now uses Axios error response pattern.
 - **[Pricing] `SLA_TIERS` aligned with subscription vocabulary** (`backend/services/sla_service.py`):
   added canonical `basic` (≡ standard) and `professional` (≡ pro) keys so the tier
   names used in `subscription_router.py`, `sla_router.py`, and `permissions.py` work
@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   scrubbing-centre adapters, PayPal/bKash billing, and DNS domain-verify stubs are
   now explicitly marked ⚠️ in the Known Issues table and relevant sections so
   operators know what requires real provider credentials before production use.
+
+## [1.3.5] — 2026-06-15
 
 ### Fixed
 - **[Portal] Customer portal frontend now matches backend API routes** (`frontend/src/pages/customer/*.js`):

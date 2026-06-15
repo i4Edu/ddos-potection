@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { getMyAlerts } from '../../services/api';
-import type { ICustomerAlertItem } from '../../types/api';
 
 /**
  * Customer self-service portal — My Alerts
  * Read-only feed of DDoS alerts affecting the customer's ISP scope.
  */
 function MyAlerts() {
-  const [alerts, setAlerts] = useState<ICustomerAlertItem[]>([]);
+  const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'resolved'
   const navigate = useNavigate();
 
@@ -23,7 +22,7 @@ function MyAlerts() {
     try {
       const res = await getMyAlerts();
       setAlerts(Array.isArray(res.data) ? res.data : []);
-    } catch (err: any) {
+    } catch (err) {
       if (err?.response?.status === 401) {
         navigate('/login');
         return;

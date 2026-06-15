@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { getMyProtection } from '../../services/api';
-import type { ICustomerProtection } from '../../types/api';
 
 /**
  * Customer self-service portal — My Protection
  * Read-only account-level protection summary.
  */
 function MyProtection() {
-  const [protection, setProtection] = useState<ICustomerProtection | null>(null);
+  const [protection, setProtection] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +21,7 @@ function MyProtection() {
     try {
       const res = await getMyProtection();
       setProtection(res.data);
-    } catch (err: any) {
+    } catch (err) {
       if (err?.response?.status === 401) {
         navigate('/login');
         return;

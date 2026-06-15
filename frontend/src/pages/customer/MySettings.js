@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { getMySettings, updateMySettings } from '../../services/api';
-import type { ICustomerSettings } from '../../types/api';
 
 /**
  * Customer self-service portal — My Settings
@@ -11,8 +10,8 @@ import type { ICustomerSettings } from '../../types/api';
 function MySettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
   const [notificationEmail, setNotificationEmail] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
   const [alertThreshold, setAlertThreshold] = useState('high');
@@ -25,11 +24,11 @@ function MySettings() {
   const loadSettings = async () => {
     try {
       const res = await getMySettings();
-      const data: ICustomerSettings = res.data;
+      const data = res.data;
       setNotificationEmail(data.notification_email || '');
       setWebhookUrl(data.webhook_url || '');
       setAlertThreshold(data.alert_threshold || 'high');
-    } catch (err: any) {
+    } catch (err) {
       if (err?.response?.status === 401) {
         navigate('/login');
         return;
@@ -41,7 +40,7 @@ function MySettings() {
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
@@ -54,7 +53,7 @@ function MySettings() {
         alert_threshold: alertThreshold,
       });
       setSuccessMsg('Settings saved successfully.');
-    } catch (err: any) {
+    } catch (err) {
       if (err?.response?.status === 401) {
         navigate('/login');
         return;

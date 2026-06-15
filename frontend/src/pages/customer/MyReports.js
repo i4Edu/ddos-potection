@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { getMyReports, downloadReport } from '../../services/api';
-import type { ICustomerReportItem } from '../../types/api';
 
 /**
  * Customer self-service portal — My Reports
  * Read-only list of reports generated for the customer's ISP scope.
  */
 function MyReports() {
-  const [reports, setReports] = useState<ICustomerReportItem[]>([]);
+  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +21,7 @@ function MyReports() {
     try {
       const res = await getMyReports();
       setReports(Array.isArray(res.data) ? res.data : []);
-    } catch (err: any) {
+    } catch (err) {
       if (err?.response?.status === 401) {
         navigate('/login');
         return;
@@ -34,12 +33,12 @@ function MyReports() {
     }
   };
 
-  const handleDownload = async (report: ICustomerReportItem) => {
+  const handleDownload = async (report) => {
     try {
       const res = await downloadReport(report.id);
       const blob = new Blob([res.data]);
       const url = URL.createObjectURL(blob);
-      const disposition = (res.headers as any)['content-disposition'] || '';
+      const disposition = res.headers['content-disposition'] || '';
       const match = disposition.match(/filename="?([^"]+)"?/i);
       const fallbackExt = report.file_format || 'bin';
       const a = document.createElement('a');
